@@ -28,6 +28,3 @@ Run the API server locally:
 uvicorn app.server:app --reload --port 8000
 ```
 
-Open http://localhost:8000/ to use the simple web UI, or visit http://localhost:8000/docs for the automatic API docs.
-
-If you'd like, I can add a Dockerfile, CI improvements, or a fuller neural-model demo using PyTorch or TensorFlow (these require installing the optional packages). Let me know which you'd prefer next.
