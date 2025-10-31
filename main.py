@@ -1,4 +1,20 @@
 
+"""Movie recommendation chatbot (main)
+
+This script provides a small chatbot-style CLI that recommends movies
+using scikit-learn's TF-IDF + cosine similarity.
+
+Behavior:
+- If a `movies.csv` file exists in the repository with columns
+  `title,genres,description` it will be loaded. Otherwise a small
+  built-in sample dataset is used.
+- Type a query like "recommend action movies" or "i like space movies"
+  and the bot will return the top matches.
+- Type `exit` or `quit` to stop.
+
+This file is designed to be a clear single-file example suitable for
+including in a GitHub repo `main.py` entry point.
+"""
 
 from __future__ import annotations
 
@@ -68,6 +84,33 @@ class MovieRecommender:
 	def get_movie(self, idx: int) -> Dict[str, str]:
 		row = self.df.iloc[idx]
 		return {"title": row["title"], "genres": row["genres"], "description": row["description"]}
+
+	def recommend_similar(self, title: str, top_k: int = 5) -> List[Tuple[int, float]]:
+		"""Return movies similar to the given title using TF-IDF cosine similarity.
+
+		Looks for the first movie whose title contains the provided `title` (case-insensitive).
+		If not found, returns an empty list.
+		"""
+		if not title or not title.strip():
+			return []
+		title_l = title.lower()
+		# find matching index by title substring
+		match_idx = None
+		for i, row in self.df.iterrows():
+			if title_l in str(row["title"]).lower():
+				match_idx = i
+				break
+		if match_idx is None:
+			return []
+		# compute similarity between the matched movie and all others
+		movie_vec = self.tfidf_matrix[match_idx]
+		cosine_sim = linear_kernel(movie_vec, self.tfidf_matrix).flatten()
+		# exclude the movie itself
+		cosine_sim[match_idx] = -1
+		if np.all(cosine_sim <= 0):
+			return []
+		top_indices = cosine_sim.argsort()[::-1][:top_k]
+		return [(int(i), float(cosine_sim[i])) for i in top_indices]
 
 
 def format_recommendations(recs: List[Tuple[int, float]], recommender: MovieRecommender) -> str:

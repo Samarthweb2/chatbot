@@ -1,0 +1,14 @@
+# Optional heavy ML frameworks (install only if you need them)
+# Uncomment desired lines and install separately (they are large)
+# torch (PyTorch) - verify appropriate CUDA/CPU build for your machine
+# Example (CPU-only):
+# pip install --index-url https://download.pytorch.org/whl/cpu torch
+# Or install a specific torch release, e.g., torch>=2.0
+
+# Optional transformer-based generation (requires torch)
+# transformers>=4.40
+
+# tensorflow - CPU build
+# tensorflow>=2.12
+
+# Note: Installing these can be slow and require specific system setup.
